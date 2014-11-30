@@ -21,7 +21,11 @@ http://docs.python.org/library/socketserver.html
 """
 
 import calendar
-import socketserver
+import sys
+try:
+    import socketserver
+except ImportError:
+    import SocketServer as socketserver
 import time
 
 from pythonosc import osc_bundle
@@ -74,6 +78,7 @@ class _UDPHandler(socketserver.BaseRequestHandler):
           else:
             handler.callback(timed_msg.message.address, *timed_msg.message)
     except osc_packet.ParseError:
+      print "parse error"
       pass
 
 
@@ -94,7 +99,7 @@ class BlockingOSCUDPServer(socketserver.UDPServer):
   """
 
   def __init__(self, server_address, dispatcher):
-    super().__init__(server_address, _UDPHandler)
+    super().__init__(server_address, _UDPHandler) if sys.version >= '3' else socketserver.UDPServer.__init__(self, server_address, _UDPHandler)
     self._dispatcher = dispatcher
 
   def verify_request(self, request, client_address):
@@ -116,7 +121,7 @@ class ThreadingOSCUDPServer(
   """
 
   def __init__(self, server_address, dispatcher):
-    super().__init__(server_address, _UDPHandler)
+    super().__init__(server_address, _UDPHandler) if sys.version >= '3' else socketserver.UDPServer.__init__(self, server_address, _UDPHandler)
     self._dispatcher = dispatcher
 
   def verify_request(self, request, client_address):

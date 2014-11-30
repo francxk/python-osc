@@ -1,0 +1,13 @@
+*.pyc
+*.ropeproject
+*env/
+swag/
+*.py[cod]
+*.coverage
+
+# Mr Developer
+.idea
+.mr.developer.cfg
+.project
+.pydevproject
+
